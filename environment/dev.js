@@ -1,1 +1,4 @@
-module.exports = 'token'
+module.exports = {
+    token: 'token',
+    idMasha: 0,
+};

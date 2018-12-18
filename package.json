@@ -1,18 +1,27 @@
 {
-  "name": "telegram-bot-test",
+  "name": "telegram-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "dependencies": {
+    "mongoose": "^5.4.0",
+    "telegraf": "^3.25.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  },
   "scripts": {
     "start": "node index",
     "server": "nodemon index"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ptitsynamasha/telegram-bot.git"
+  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "node-telegram-bot-api": "^0.30.0"
+  "bugs": {
+    "url": "https://github.com/ptitsynamasha/telegram-bot/issues"
   },
-  "devDependencies": {
-    "nodemon": "^1.18.9"
-  }
+  "homepage": "https://github.com/ptitsynamasha/telegram-bot#readme"
 }

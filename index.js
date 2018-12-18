@@ -1,49 +1,46 @@
-const token = require('./environment/prod');
-const TelegramBot = require('node-telegram-bot-api');
-const bot = new TelegramBot(token, {polling: true});
+const mongoose = require('mongoose');
+const session = require("telegraf/session");
+const Stage = require("telegraf/stage");
+const WizardScene = require("telegraf/scenes/wizard");
+const keys = require('./environment/prod');
+const Telegraf = require('telegraf');
+const helpFunctions = require('./utils/helpFunctions');
+const User = require('./models/User');
+const Price = require('./models/Price');
+const Markup = require('telegraf/markup')
 
-bot.onText(/start/, function (msg, match) {
-    const fromId = msg.from.id;
-    try {
-        bot.sendMessage(fromId, `Command list:
-         /echo
-         /masha
-         `);
-    } catch (e) {
-        console.log('e', e)
-    }
-});
-
-bot.onText(/echo (.+)/, function (msg, match) {
-    const resp = match;
-    const fromId = msg.from.id;
-    try {
-        bot.sendMessage(fromId, 'echo');
-    } catch (e) {
-        console.log('e', e)
-    }
-});
-
-bot.onText(/masha (.+)/, function (msg, match) {
-    const resp = match;
-    const fromId = msg.from.id;
-    try {
-        bot.sendMessage(fromId, 'masha');
-    } catch (e) {
-        console.log('e', e)
-    }
-});
+mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
+    .then(() => console.log('mongo db connected'))
+    .catch(error => console.log(error));
 
 
-bot.on('message', function (msg) {
-    const chatId = msg.chat.id;
-    const fromId = msg.from.id;
-    const text = msg['text']
-    console.log(text)
-    try {
-        bot.sendMessage(fromId, `Message ${text}`);
+const enterWaterServicePrices = require('./controllers/enterWaterServicePrices');
+const enterWaterService = require('./controllers/enterWaterService');
+const viewWaterServicePrices = require('./controllers/viewWaterServicePrices');
+const enterWaterServiceMeter = require('./controllers/enterWaterServiceMeter');
+const viewWaterServiceMeter = require('./controllers/viewWaterServiceMeter');
+const commands = require('./controllers/commands');
 
-    } catch (e) {
-        console.log('e', e)
-    }
-});
+const bot = new Telegraf(keys.telegramToken);
+
+bot.start((ctx) => commands(ctx));
+bot.help((ctx) => commands(ctx));
+bot.on('sticker', (ctx) => ctx.reply('👍'));
+bot.hears('hi', (ctx) => ctx.reply('Hey there'));
+
+
+const stage = new Stage();
+stage.register(enterWaterServicePrices);
+stage.register(enterWaterService);
+stage.register(viewWaterServicePrices);
+stage.register(enterWaterServiceMeter);
+stage.register(viewWaterServiceMeter);
+bot.use(session());
+bot.use(stage.middleware());
+
+bot.action("enterWaterServicePrices", (ctx) => ctx.scene.enter("enterWaterServicePrices"));
+bot.action("enterWaterService", (ctx) => ctx.scene.enter("enterWaterService"));
+bot.action("enterWaterServiceMeter", (ctx) => ctx.scene.enter("enterWaterServiceMeter"));
+bot.action("viewWaterServicePrices", (ctx) => ctx.scene.enter("viewWaterServicePrices"));
+bot.action("viewWaterServiceMeter", (ctx) => ctx.scene.enter("viewWaterServiceMeter"));
+bot.startPolling();
