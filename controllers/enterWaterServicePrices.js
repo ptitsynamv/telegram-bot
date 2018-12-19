@@ -13,7 +13,7 @@ module.exports = new WizardScene(
     "enterWaterServicePrices",
     (ctx) => {
         ctx.reply(`Этап 1: цена горячей воды. (Например, 10.5). 
-        Выйти из опции: Назад`);
+        Выйти из опции: 'Назад'`);
         return ctx.wizard.next();
     },
     (ctx) => {
@@ -64,20 +64,29 @@ module.exports = new WizardScene(
                 };
                 if (price) {
                     price.data = data;
-                    resolve(price.save());
+                    price.save(err => {
+                        if (err) return reject(err);
+                        return resolve()
+                    })
                 } else {
-                    resolve(new Price({
+                    new Price({
                         serviceName: 'WaterService',
                         chatId,
                         data
-                    }).save())
+                    }).save(err => {
+                        if (err) return reject(err);
+                        return resolve()
+                    })
                 }
             })
         })
             .then(
-                // TODO error handler
                 () => {
                     ctx.reply('Данные записаны успешно)).');
+                    return ctx.scene.leave()
+                },
+                err => {
+                    ctx.reply(`Ошибка: ${err}`);
                     return ctx.scene.leave()
                 }
             )

@@ -30,7 +30,6 @@ bot.hears('hi', (ctx) => ctx.reply('Hey there'));
 const stage = new Stage();
 stage.register(enterWaterServicePrices);
 stage.register(enterWaterService);
-stage.register(viewWaterServicePrices);
 stage.register(enterWaterServiceMeter);
 stage.register(start);
 bot.use(session());
@@ -40,7 +39,7 @@ bot.start((ctx) => ctx.scene.enter("start"));
 bot.action("enterWaterServicePrices", (ctx) => ctx.scene.enter("enterWaterServicePrices"));
 bot.action("enterWaterService", (ctx) => ctx.scene.enter("enterWaterService"));
 bot.action("enterWaterServiceMeter", (ctx) => ctx.scene.enter("enterWaterServiceMeter"));
-bot.action("viewWaterServicePrices", (ctx) => ctx.scene.enter("viewWaterServicePrices"));
+bot.action("viewWaterServicePrices", (ctx) => viewWaterServicePrices(ctx));
 bot.action("viewWaterServiceMeter", (ctx) => viewWaterServiceMeter(ctx));
 bot.startPolling();
 bot.catch((err) => {
