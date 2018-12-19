@@ -75,9 +75,6 @@ cron.schedule("1 1 20 20,21,22,23,24,25 * *", function () {
 const url = 'https://www.hts.kharkov.ua/KPHTS_v2_bill1PU.php?pg=1';
 const Horseman = require('node-horseman');
 const horseman = new Horseman();
-const email = 'ptitsynamv@gmail.com';
-const password = 'akindofmagic12';
-
 
 function horsemanStart(email, password) {
     horseman
@@ -111,4 +108,4 @@ function horsemanStart(email, password) {
         .close();
 }
 
-// horsemanStart(email, password);
+horsemanStart(keys.emailVodocanal, keys.passwordVodocanal);

@@ -4,15 +4,11 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "casperjs": "^1.1.4",
-    "cheerio": "^1.0.0-rc.2",
     "moment": "^2.23.0",
     "mongoose": "^5.4.0",
     "node-cron": "^2.0.3",
     "node-horseman": "^3.3.0",
     "phantomjs": "^2.1.7",
-    "puppeteer": "^1.11.0",
-    "rxjs": "^6.3.3",
     "telegraf": "^3.25.5"
   },
   "devDependencies": {
