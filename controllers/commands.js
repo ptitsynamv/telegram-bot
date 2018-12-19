@@ -8,19 +8,20 @@ module.exports = (ctx) => {
     const arrayCommands = [];
     let isHasPrice = false;
     new Promise((resolve, reject) => {
-        resolve(User.find({chatId: chatId}))
+        resolve(User.findOne({chatId: chatId}))
     })
-        .then((user) => {
-            if (user.length === 0) {
-                return new Promise((resolve, reject) => {
-                    resolve(new User({
-                        chatId: fromId,
-                        username: username,
-                    }).save());
-                })
-            }
-            return false
-        })
+        .then(
+            user => {
+                if (!user) {
+                    return new Promise((resolve, reject) => {
+                        resolve(new User({
+                            chatId: fromId,
+                            username: username,
+                        }).save());
+                    })
+                }
+                return false
+            })
         .then(isNewUser => {
             return isNewUser ? ctx.reply('Вы зарегистрировались в системе.') : ''
         })

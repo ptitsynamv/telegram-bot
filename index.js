@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 const session = require("telegraf/session");
 const Stage = require("telegraf/stage");
-const WizardScene = require("telegraf/scenes/wizard");
 const keys = require('./environment/prod');
 const Telegraf = require('telegraf');
-const helpFunctions = require('./utils/helpFunctions');
-const User = require('./models/User');
-const Price = require('./models/Price');
-const Markup = require('telegraf/markup')
+const cron = require("node-cron");
+const WaterService = require('./models/WaterService');
+const moment = require('moment');
 
 mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .then(() => console.log('mongo db connected'))
@@ -44,3 +42,31 @@ bot.action("enterWaterServiceMeter", (ctx) => ctx.scene.enter("enterWaterService
 bot.action("viewWaterServicePrices", (ctx) => ctx.scene.enter("viewWaterServicePrices"));
 bot.action("viewWaterServiceMeter", (ctx) => ctx.scene.enter("viewWaterServiceMeter"));
 bot.startPolling();
+
+
+cron.schedule("1 1 20 20,21,22,23,24,25 * *", function () {
+    const chatId = keys.idMasha;
+    const monthStart = new Date(moment().startOf('month').toDate());
+    const monthEnd = new Date(moment().endOf('month').toDate());
+
+    new Promise((resolve, reject) => {
+        WaterService.findOne({
+                chatId,
+                date: {
+                    $gt: monthStart,
+                    $lt: monthEnd
+                }
+            }
+            , (err, waterService) => {
+                if (err) reject(err);
+                resolve(waterService)
+            });
+    })
+        .then(
+            waterService => {
+                if (!waterService) {
+                    bot.telegram.sendMessage(chatId, 'Отправь данные о водоснабжении.');
+                }
+            }
+        );
+});

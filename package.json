@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "moment": "^2.23.0",
     "mongoose": "^5.4.0",
+    "node-cron": "^2.0.3",
+    "rxjs": "^6.3.3",
     "telegraf": "^3.25.5"
   },
   "devDependencies": {

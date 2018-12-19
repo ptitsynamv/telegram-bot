@@ -7,15 +7,22 @@ const waterServiceSchema = new Schema({
         type: Number,
         required: true,
     },
-    coldWater: {
-        name: String,
-        value: Number
+    hotKittenValue: {
+        type: String,
     },
-    hotWater: {
-        name: String,
-        value: Number
+    coldKittenValue: {
+        type: String,
     },
-    sewage: Number
+    hotBathroomValue: {
+        type: String,
+    },
+    coldBathroomValue: {
+        type: String,
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    },
 });
 
 module.exports = mongoose.model('waterServices', waterServiceSchema);
