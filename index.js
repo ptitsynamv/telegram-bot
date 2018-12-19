@@ -17,11 +17,11 @@ const enterWaterService = require('./controllers/enterWaterService');
 const viewWaterServicePrices = require('./controllers/viewWaterServicePrices');
 const enterWaterServiceMeter = require('./controllers/enterWaterServiceMeter');
 const viewWaterServiceMeter = require('./controllers/viewWaterServiceMeter');
+const start = require('./controllers/start');
 const commands = require('./controllers/commands');
 
 const bot = new Telegraf(keys.telegramToken);
 
-bot.start((ctx) => commands(ctx));
 bot.help((ctx) => commands(ctx));
 bot.on('sticker', (ctx) => ctx.reply('👍'));
 bot.hears('hi', (ctx) => ctx.reply('Hey there'));
@@ -32,16 +32,21 @@ stage.register(enterWaterServicePrices);
 stage.register(enterWaterService);
 stage.register(viewWaterServicePrices);
 stage.register(enterWaterServiceMeter);
-stage.register(viewWaterServiceMeter);
+stage.register(start);
 bot.use(session());
 bot.use(stage.middleware());
 
+bot.start((ctx) => ctx.scene.enter("start"));
 bot.action("enterWaterServicePrices", (ctx) => ctx.scene.enter("enterWaterServicePrices"));
 bot.action("enterWaterService", (ctx) => ctx.scene.enter("enterWaterService"));
 bot.action("enterWaterServiceMeter", (ctx) => ctx.scene.enter("enterWaterServiceMeter"));
 bot.action("viewWaterServicePrices", (ctx) => ctx.scene.enter("viewWaterServicePrices"));
-bot.action("viewWaterServiceMeter", (ctx) => ctx.scene.enter("viewWaterServiceMeter"));
+bot.action("viewWaterServiceMeter", (ctx) => viewWaterServiceMeter(ctx));
 bot.startPolling();
+bot.catch((err) => {
+    console.log('Ooops', err)
+});
+
 
 
 cron.schedule("1 1 20 20,21,22,23,24,25 * *", function () {
@@ -71,41 +76,3 @@ cron.schedule("1 1 20 20,21,22,23,24,25 * *", function () {
         );
 });
 
-
-const url = 'https://www.hts.kharkov.ua/KPHTS_v2_bill1PU.php?pg=1';
-const Horseman = require('node-horseman');
-const horseman = new Horseman();
-
-function horsemanStart(email, password) {
-    horseman
-        .userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36')
-        .open(url)
-        .type('input[type=email]', email)
-        .type('input[type=password]', password)
-        .click('.message-block input[type="submit"]')
-        .waitForNextPage()
-
-        .text('.Header1')
-        .then((text) => {
-            console.log('text', text);
-        })
-        .click("a[href='KPHTS_v2_bill01PUNrazvilka.php']")
-        .waitForNextPage()
-
-        .text('div .ui-state-default')
-        .then((text) => {
-            console.log('text', text);
-        })
-        .type('input[name="0[ValueN]"]', 'test')
-        .type('input[name="1[ValueN]"]', 'test')
-        .click('input[type="submit"]')
-
-        .waitForSelector('.info_errors')
-        .text('.info_errors')
-        .then((text) => {
-            console.log('text', text);
-        })
-        .close();
-}
-
-horsemanStart(keys.emailVodocanal, keys.passwordVodocanal);

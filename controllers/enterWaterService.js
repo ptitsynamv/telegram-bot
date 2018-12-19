@@ -1,6 +1,9 @@
 const WaterServiceMeter = require('../models/WaterServiceMeter');
 const WaterService = require('../models/WaterService');
 const WizardScene = require("telegraf/scenes/wizard");
+const scrapingHotWater = require('../utils/scraping');
+const keys = require('../environment/prod');
+
 
 module.exports = new WizardScene(
     'enterWaterService',
@@ -116,10 +119,30 @@ ${now.toLocaleDateString()}.
 Счетчик №${coldWaterBathroom} - ${coldBathroomValue}`;
 
                     ctx.reply(message);
-                    ctx.reply('Данные записаны успешно)).');
-                    return ctx.scene.leave()
-
+                    ctx.reply('Данные записаны успешно)). Будем отправлять их на сайт водоканала? (да, нет)');
+                    return ctx.wizard.next();
                 }
             )
+    },
+    (ctx) => {
+        if (ctx.message.text.toLowerCase() === "нет") {
+            return ctx.scene.leave()
+        }
+        ctx.reply('Отправляем на сайт водоканала.');
+
+        scrapingHotWater(keys.emailVodocanal, keys.passwordVodocanal)
+            .then(
+                (success) => {
+                    ctx.reply('Норм. Все отправили)');
+                    return ctx.scene.leave()
+                }
+            )
+            .catch(
+                (error) => {
+                    ctx.reply(`Была ошибка: ${error}`);
+                    return ctx.scene.leave()
+                },
+            );
+
     }
 );

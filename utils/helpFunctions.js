@@ -10,4 +10,9 @@ const addRowInStr = (str, newRow) => {
     return str + newRow;
 };
 
-module.exports = {initSet, addRowInStr}
+const leaveSceneCommands = (ctx) => {
+    const message = ctx.message && ctx.message.text ? ctx.message.text.toLowerCase() : '';
+    return message.search(/назад|-|отмена|вернуться/) !== -1;
+};
+
+module.exports = {initSet, addRowInStr, leaveSceneCommands}

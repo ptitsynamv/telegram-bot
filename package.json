@@ -9,6 +9,7 @@
     "node-cron": "^2.0.3",
     "node-horseman": "^3.3.0",
     "phantomjs": "^2.1.7",
+    "rxjs": "^6.3.3",
     "telegraf": "^3.25.5"
   },
   "devDependencies": {
