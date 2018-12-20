@@ -3,7 +3,7 @@ const WaterService = require('../models/WaterService');
 const User = require('../models/User');
 const WizardScene = require("telegraf/scenes/wizard");
 const scraping = require('../utils/scraping');
-const keys = require('../environment/prod');
+const keys = require('../config/keys');
 const helpFunctions = require('../utils/helpFunctions');
 
 function validateMeterValue(ctx) {
