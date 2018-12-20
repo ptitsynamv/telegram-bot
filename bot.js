@@ -7,7 +7,7 @@ const cron = require("node-cron");
 const WaterService = require('./models/WaterService');
 const moment = require('moment');
 const helpFunctions = require('./utils/helpFunctions');
-const http = require('http');
+
 
 mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .then(() => {
@@ -16,15 +16,7 @@ mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .catch(error => console.log(error));
 
 
-const ip = process.env.IP || 'localhost';
-const port = process.env.PORT || 8080;
-const url = `https://telegram.me/${process.env.CHANNEL}`;
-const server = http.createServer((request, response) => {
-    response.writeHead(200, {'Content-Type': 'text/html'});
-    response.end(`This is Sinfest bot on <a href = '${url}'>${url}</a>`)
-});
-server.listen(port);
-console.log(`Server listening at http://${ip}:${port}/`);
+
 
 
 const bot = new Telegraf(keys.telegramToken, {polling: true});
