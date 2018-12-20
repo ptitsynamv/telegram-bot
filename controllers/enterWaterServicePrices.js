@@ -1,10 +1,10 @@
 const Price = require('../models/Price');
 const WizardScene = require("telegraf/scenes/wizard");
-const helpFunctions = require('../utils/helpFunctions')
+const helpFunctions = require('../utils/helpFunctions');
 
 function validatePrice(ctx) {
     const price = ctx.message && ctx.message.text ? ctx.message.text : false;
-    if (!price) return price;
+    if (!price) return false;
     return !isNaN(parseFloat(price));
 }
 
@@ -18,6 +18,7 @@ module.exports = new WizardScene(
     },
     (ctx) => {
         if (helpFunctions.leaveSceneCommands(ctx) || !validatePrice(ctx)) {
+            ctx.reply('Вы вышли из опции.');
             return ctx.scene.leave()
         }
         ctx.scene.session.hotWaterPrice = parseFloat(ctx.message.text);
@@ -26,6 +27,7 @@ module.exports = new WizardScene(
     },
     (ctx) => {
         if (helpFunctions.leaveSceneCommands(ctx) || !validatePrice(ctx)) {
+            ctx.reply('Вы вышли из опции.');
             return ctx.scene.leave()
         }
         ctx.scene.session.coldWaterPrice = parseFloat(ctx.message.text);
@@ -34,6 +36,7 @@ module.exports = new WizardScene(
     },
     (ctx) => {
         if (helpFunctions.leaveSceneCommands(ctx) || !validatePrice(ctx)) {
+            ctx.reply('Вы вышли из опции.');
             return ctx.scene.leave()
         }
         ctx.scene.session.sewagePrice = parseFloat(ctx.message.text);
@@ -48,6 +51,7 @@ module.exports = new WizardScene(
     },
     (ctx) => {
         if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
             return ctx.scene.leave()
         }
 

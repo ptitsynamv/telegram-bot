@@ -12,34 +12,33 @@ const scrapingHotWater = (email, password, hotWater1 = 'test', hotWater2 = 'test
             .click('.message-block input[type="submit"]')
             .waitForNextPage()
 
-            .text('.Header1')
-            .then((text) => {
-                console.log('text', text);
-            })
+            // .text('.Header1')
+            // .then((text) => {
+            //     console.log('text', text);
+            // })
             .click("a[href='KPHTS_v2_bill01PUNrazvilka.php']")
             .waitForNextPage()
 
-            .text('div .ui-state-default')
-            .then((text) => {
-                console.log('text', text);
-            })
+            // .text('div .ui-state-default')
+            // .then((text) => {
+            //     console.log('text', text);
+            // })
             .type('input[name="0[ValueN]"]', hotWater1)
             .type('input[name="1[ValueN]"]', hotWater2)
 
             .click('input[type="submit"]')
             .waitForSelector('.info_errors')
             .catch(err => {
-                console.log('deal with a timeout error');
+                console.log('deal with a timeout error', err);
             })
             .text('.info_errors')
             .then((errors) => {
                 if (errors) {
-                    reject(errors);
+                    resolve(errors);
                 } else {
-                    resolve(horseman.close());
+                    reject(horseman.close());
                 }
             })
     })
 };
-
-module.exports = scrapingHotWater;
+module.exports = {scrapingHotWater, url};

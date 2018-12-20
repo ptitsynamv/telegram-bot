@@ -1,14 +1,24 @@
 const WaterServiceMeter = require('../models/WaterServiceMeter');
 const WaterService = require('../models/WaterService');
+const User = require('../models/User');
 const WizardScene = require("telegraf/scenes/wizard");
-const scrapingHotWater = require('../utils/scraping');
+const scraping = require('../utils/scraping');
 const keys = require('../environment/prod');
+const helpFunctions = require('../utils/helpFunctions');
 
+function validateMeterValue(ctx) {
+    let value = ctx.message && ctx.message.text ? ctx.message.text : false;
+    if (!value) return false;
+    value = value.replace(/[^.,0-9]/gim, '');
+    value = value.replace(',', '.');
+    if (!value || isNaN(parseFloat(value))) return false;
+    return parseFloat(value);
+}
 
 module.exports = new WizardScene(
     'enterWaterService',
     (ctx) => {
-        const chatId = ctx.update.callback_query.from.id;
+        const chatId = helpFunctions.getChatIdFromScene(ctx);
         return new Promise((resolve, reject) => {
             WaterServiceMeter.findOne({chatId}, (err, meter) => {
                 if (err) reject(err);
@@ -25,56 +35,68 @@ module.exports = new WizardScene(
                     ctx.reply(`Этап 1: Кухня Горячая вода №${meter.hotWaterKitchen}. 
 (Например 2.381)`);
                     return ctx.wizard.next();
+                },
+                err => {
+                    return helpFunctions.errorSceneHandler(ctx, err)
                 }
             )
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "назад") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
+        }
+        if (!validateMeterValue(ctx)) {
+            ctx.reply('Неверный формат ввода.');
+            return ctx.wizard.back();
         }
 
-        // TODO parse and validate
-        const hotKittenValue = ctx.message.text;
-        ctx.scene.session.hotKittenValue = hotKittenValue;
-
+        ctx.scene.session.hotKittenValue = validateMeterValue(ctx);
         ctx.reply(`Этап 2: Кухня Холодная вода №${ctx.scene.session.coldWaterKitchen}.
 (Например 2.381)`);
         return ctx.wizard.next();
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "назад") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
+        }
+        if (!validateMeterValue(ctx)) {
+            ctx.reply('Неверный формат ввода.');
+            return ctx.wizard.back();
         }
 
-        // TODO parse and validate
-        const coldKittenValue = ctx.message.text;
-        ctx.scene.session.coldKittenValue = coldKittenValue;
-
+        ctx.scene.session.coldKittenValue = validateMeterValue(ctx);
         ctx.reply(`Этап 3: Ванная Горячая вода №${ctx.scene.session.hotWaterBathroom}. 
 (Например 2.381)`);
         return ctx.wizard.next();
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "назад") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
+        }
+        if (!validateMeterValue(ctx)) {
+            ctx.reply('Неверный формат ввода.');
+            return ctx.wizard.back();
         }
 
-        // TODO parse and validate
-        const hotBathroomValue = ctx.message.text;
-        ctx.scene.session.hotBathroomValue = hotBathroomValue;
-
+        ctx.scene.session.hotBathroomValue = validateMeterValue(ctx);
         ctx.reply(`Этап 4: Ванная Холодная вода №${ctx.scene.session.coldWaterBathroom}.  
 (Например 2.381)`);
         return ctx.wizard.next();
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "назад") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
+        }
+        if (!validateMeterValue(ctx)) {
+            ctx.reply('Неверный формат ввода.');
+            return ctx.wizard.back();
         }
 
-        // TODO parse and validate
-        ctx.scene.session.coldBathroomValue = ctx.message.text;
-
+        ctx.scene.session.coldBathroomValue = validateMeterValue(ctx);
         const {hotKittenValue, coldKittenValue, hotBathroomValue, coldBathroomValue} = ctx.scene.session;
         const {hotWaterKitchen, coldWaterKitchen, hotWaterBathroom, coldWaterBathroom} = ctx.scene.session;
 
@@ -86,31 +108,33 @@ module.exports = new WizardScene(
         return ctx.wizard.next();
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "назад") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
         }
-        if (ctx.message.text.toLowerCase() === "нет") {
-            return ctx.scene.reenter()
-        }
-        const chatId = ctx.update.message.from.id;
+
+        const chatId = helpFunctions.getChatIdFromScene(ctx);
         const {hotKittenValue, coldKittenValue, hotBathroomValue, coldBathroomValue} = ctx.scene.session;
         const {hotWaterKitchen, coldWaterKitchen, hotWaterBathroom, coldWaterBathroom} = ctx.scene.session;
 
-        return new Promise((resolve, reject) => {
-            const waterService = new WaterService({
-                chatId,
-                hotKittenValue,
-                coldKittenValue,
-                hotBathroomValue,
-                coldBathroomValue
-            });
-            resolve(waterService.save())
-        })
-            .then(
-                waterService => {
-                    const now = new Date();
-                    const message = `
+        const waterService = new WaterService({
+            chatId,
+            hotKittenValue,
+            coldKittenValue,
+            hotBathroomValue,
+            coldBathroomValue
+        });
+
+        return waterService.save(err => {
+            if (err) return helpFunctions.errorSceneHandler(ctx, err);
+            return User.findOne({chatId}, (err, user) => {
+                if (err) return helpFunctions.errorSceneHandler(ctx, err);
+                if (!user) return helpFunctions.errorSceneHandler(ctx, 'User nor found');
+
+                const now = new Date();
+                const message = `
 ${now.toLocaleDateString()}.
+${user.address}.
 Гарячая вода: 
 Счетчик №${hotWaterKitchen} - ${hotKittenValue}
 Счетчик №${hotWaterBathroom} - ${hotBathroomValue}
@@ -118,28 +142,34 @@ ${now.toLocaleDateString()}.
 Счетчик №${coldWaterKitchen} - ${coldKittenValue}
 Счетчик №${coldWaterBathroom} - ${coldBathroomValue}`;
 
-                    ctx.reply(message);
-                    ctx.reply('Данные записаны успешно)). Будем отправлять их на сайт водоканала? (да, нет)');
+                ctx.reply(message);
+                ctx.reply('Данные записаны успешно))');
+                if (chatId === keys.idMasha) {
+                    ctx.reply('Будем отправлять их на сайт Харьковводоканал? (да, нет)');
                     return ctx.wizard.next();
                 }
-            )
+                return ctx.scene.leave()
+            })
+        })
     },
     (ctx) => {
-        if (ctx.message.text.toLowerCase() === "нет") {
-            return ctx.scene.leave()
+        if (helpFunctions.leaveSceneCommands(ctx)) {
+            ctx.reply('Вы вышли из опции.');
+            return ctx.scene.leave();
         }
-        ctx.reply('Отправляем на сайт водоканала.');
 
-        scrapingHotWater(keys.emailVodocanal, keys.passwordVodocanal)
+        const {hotKittenValue, hotBathroomValue} = ctx.scene.session;
+        ctx.reply(`Отправляем на сайт Харьковводоканал данные: 1. ${hotKittenValue}; 2. ${hotBathroomValue}.`);
+        scraping.scrapingHotWater(keys.emailVodocanal, keys.passwordVodocanal, hotKittenValue.toString(), hotBathroomValue.toString())
             .then(
-                (success) => {
-                    ctx.reply('Норм. Все отправили)');
+                (message) => {
+                    ctx.reply(`Ответ от сайта: ${message}`);
                     return ctx.scene.leave()
                 }
             )
             .catch(
                 (error) => {
-                    ctx.reply(`Была ошибка: ${error}`);
+                    ctx.reply(`Ответ от сайта не было, проверьте сайт сами: ${scraping.url}`);
                     return ctx.scene.leave()
                 },
             );

@@ -19,8 +19,6 @@ module.exports = (ctx) => {
             }
             if (waterServiceMeter) {
                 arrayCommands.push(Markup.callbackButton("Посмотреть счетчики для водоснабжения", "viewWaterServiceMeter"));
-            }
-            if (price && waterServiceMeter) {
                 arrayCommands.push(Markup.callbackButton("Ввести показания для водоснабжения", "enterWaterService"));
             }
             ctx.reply("Выберите действие.",
