@@ -7,6 +7,7 @@ const cron = require("node-cron");
 const WaterService = require('./models/WaterService');
 const moment = require('moment');
 const helpFunctions = require('./utils/helpFunctions');
+const http = require('http');
 
 mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .then(() => {
@@ -15,6 +16,18 @@ mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .catch(error => console.log(error));
 
 
+const ip = process.env.IP || 'localhost';
+const port = process.env.PORT || 8080;
+const url = `https://telegram.me/${process.env.CHANNEL}`;
+const server = http.createServer((request, response) => {
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    response.end(`This is Sinfest bot on <a href = '${url}'>${url}</a>`)
+});
+server.listen(port);
+console.log(`Server listening at http://${ip}:${port}/`);
+
+
+const bot = new Telegraf(keys.telegramToken, {polling: true});
 const enterWaterServicePrices = require('./controllers/enterWaterServicePrices');
 const enterWaterService = require('./controllers/enterWaterService');
 const viewWaterServicePrices = require('./controllers/viewWaterServicePrices');
@@ -22,14 +35,10 @@ const enterWaterServiceMeter = require('./controllers/enterWaterServiceMeter');
 const viewWaterServiceMeter = require('./controllers/viewWaterServiceMeter');
 const start = require('./controllers/start');
 const commands = require('./controllers/commands');
-
-const bot = new Telegraf(keys.telegramToken);
-
 bot.help((ctx) => commands(ctx));
 bot.on('sticker', (ctx) => bot.telegram.sendSticker(ctx.update.message.from.id, helpFunctions.getRandomSticker()));
 bot.hears(/привет|hi|добр(.*) (д(.*)|вечер(.*)|утр(.))|здравствуй(.*)/i, (ctx) => ctx.reply('Привет'));
 bot.hears(/пока|до свидан(.*)|до встречи|прощай|до скорого/i, (ctx) => ctx.reply('До встречи'));
-
 
 const stage = new Stage();
 stage.register(enterWaterServicePrices);
@@ -81,9 +90,4 @@ cron.schedule("1 1 20 18,19,20,21,22,23,24,25 * *", () => {
                 bot.telegram.sendMessage(chatId, `Возникла ошибка: ${err}`)
             }
         );
-});
-
-
-require('http').createServer().listen(process.env.PORT || 5000).on('request', function(req, res){
-    res.end('')
 });
