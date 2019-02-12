@@ -16,9 +16,6 @@ mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .catch(error => console.log(error));
 
 
-
-
-
 const bot = new Telegraf(keys.telegramToken, {polling: true});
 const enterWaterServicePrices = require('./controllers/enterWaterServicePrices');
 const enterWaterService = require('./controllers/enterWaterService');
