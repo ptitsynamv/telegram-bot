@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
-const {Telegraf, session} = require('telegraf');
+const {Telegraf} = require('telegraf');
 const scraping = require('./utils/scraping');
 const {from} = require('rxjs');
 const {concatMap, map} = require('rxjs/operators');
 const Horseman = require('node-horseman');
 const horseman = new Horseman();
-
+const express = require('express')
 const Article = require('./models/Article');
 
 try {
@@ -15,6 +15,16 @@ try {
 } catch (error) {
     console.log("could not connect");
 }
+
+const expressApp = express()
+
+const port = process.env.PORT || 3000
+expressApp.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+expressApp.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+})
 
 const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN)
 bot.start((ctx) => ctx.reply('Welcome'));
@@ -61,36 +71,6 @@ bot.command('add', (ctx) => {
 });
 bot.launch();
 
+
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
-
-
-// cron.schedule("1 1 20 18,19,20,21,22,23,24,25 * *", () => {
-//     const chatId = keys.idMasha;
-//     const monthStart = new Date(moment().startOf('month').toDate());
-//     const monthEnd = new Date(moment().endOf('month').toDate());
-//
-//     new Promise((resolve, reject) => {
-//         WaterService.findOne({
-//                 chatId,
-//                 date: {
-//                     $gt: monthStart,
-//                     $lt: monthEnd
-//                 }
-//             }
-//             , (err, waterService) => {
-//                 if (err) reject(err);
-//                 resolve(waterService)
-//             });
-//     })
-//         .then(
-//             waterService => {
-//                 if (!waterService) {
-//                     bot.telegram.sendMessage(chatId, 'Отправь данные о водоснабжении.');
-//                 }
-//             },
-//             err => {
-//                 bot.telegram.sendMessage(chatId, `Возникла ошибка: ${err}`)
-//             }
-//         );
-// });

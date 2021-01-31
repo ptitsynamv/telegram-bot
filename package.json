@@ -8,6 +8,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "moment": "^2.29.1",
     "mongoose": "^5.11.14",
     "node-horseman": "^3.3.0",
