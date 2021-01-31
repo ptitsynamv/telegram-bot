@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
-const {Telegraf} = require('telegraf');
+const TelegramBot = require('node-telegram-bot-api');
 const scraping = require('./utils/scraping');
 const {from} = require('rxjs');
 const {concatMap, map} = require('rxjs/operators');
@@ -16,17 +16,19 @@ try {
     console.log("could not connect");
 }
 
-const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN);
-bot.launch();
+const bot = new TelegramBot(keys.TELEGRAM_BOT_TOKEN, {polling: true});
 
+bot.onText(/\/help/, (msg, match) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `/hi - check articles updated;
+/add - add article;`);
+});
 
-bot.start((ctx) => ctx.reply('Welcome'));
-bot.help((ctx) => ctx.reply(
-    `/hi - check articles updated;
-/add - add article;`
-));
-bot.command('hi', (ctx) => {
-    ctx.reply(`please, wait...`);
+bot.onText(/\/hi/, (msg, match) => {
+    const chatId = msg.chat.id;
+
+    bot.sendMessage(chatId,`please, wait...`);
+
     Article.find({}, 'title url')
         .then((data) => {
             from(data)
@@ -36,7 +38,7 @@ bot.command('hi', (ctx) => {
                 )
                 .subscribe(
                     (result) => {
-                        ctx.reply(`article: ${result.title}, 
+                        bot.sendMessage(chatId,`article: ${result.title},
 url: ${result.url},
 last updated: ${result.diff} days ago`)
                     },
@@ -49,8 +51,9 @@ last updated: ${result.diff} days ago`)
 
         });
 });
-bot.command('add', (ctx) => {
-    ctx.reply(`todo`)
+bot.onText(/\/add/, (msg, match) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId,`todo`)
 
 
     // const article = new Article({
@@ -64,6 +67,3 @@ bot.command('add', (ctx) => {
 });
 
 
-
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));

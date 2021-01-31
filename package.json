@@ -12,6 +12,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.11.14",
     "node-horseman": "^3.3.0",
+    "node-telegram-bot-api": "^0.51.0",
     "phantomjs": "^2.1.7",
     "rxjs": "^6.6.3",
     "telegraf": "^4.0.2"
