@@ -10,7 +10,6 @@
   "dependencies": {
     "moment": "^2.29.1",
     "mongoose": "^5.11.14",
-    "node-cron": "^2.0.3",
     "node-horseman": "^3.3.0",
     "phantomjs": "^2.1.7",
     "rxjs": "^6.6.3",
@@ -22,7 +21,7 @@
   "scripts": {
     "start": "node bot.js",
     "server": "../node_modules/.bin/nodemon server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run install",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install",
     "deploy": "git add .. && git commit -m 'fix' && git push heroku master"
   },
   "repository": {

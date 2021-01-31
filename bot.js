@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
-const {Telegraf, session} = require('telegraf')
-const cron = require("node-cron");
+const {Telegraf, session} = require('telegraf');
 const scraping = require('./utils/scraping');
 const {from} = require('rxjs');
 const {concatMap, map} = require('rxjs/operators');
