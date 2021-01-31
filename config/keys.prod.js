@@ -1,7 +1,5 @@
 module.exports = {
-    telegramToken: process.env.TELEGRAM_TOKEN,
-    idMasha: process.env.ID_MASHA,
-    mongoUrl: process.env.MONDO_URI,
-    emailVodocanal: process.env.EMAIL_VODOCANAL,
-    passwordVodocanal: process.env.PASSWORD_VODOCANAL,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_TOKEN,
+    TELEGRAM_BOT_ID: process.env.ID_MASHA,
+    MONGO_URL: process.env.MONDO_URI,
 };
