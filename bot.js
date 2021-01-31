@@ -6,7 +6,6 @@ const {from} = require('rxjs');
 const {concatMap, map} = require('rxjs/operators');
 const Horseman = require('node-horseman');
 const horseman = new Horseman();
-const express = require('express')
 const Article = require('./models/Article');
 
 try {
@@ -16,17 +15,15 @@ try {
     console.log("could not connect");
 }
 
-const expressApp = express()
-
-const port = process.env.PORT || 3000
-expressApp.get('/', (req, res) => {
-    res.send('Hello World!')
-})
-expressApp.listen(port, () => {
-    console.log(`Listening on port ${port}`)
-})
+const PORT = process.env.PORT || 3000;
+const URL = process.env.URL || keys.HEROKU_URL;
 
 const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN)
+
+bot.telegram.setWebhook(`${URL}/bot${keys.TELEGRAM_BOT_TOKEN}`);
+bot.startWebhook(`/bot${keys.TELEGRAM_BOT_TOKEN}`, null, PORT)
+
+
 bot.start((ctx) => ctx.reply('Welcome'));
 bot.help((ctx) => ctx.reply(
     `/hi - check articles updated;
