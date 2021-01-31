@@ -8,6 +8,7 @@ const WaterService = require('./models/WaterService');
 const moment = require('moment');
 const helpFunctions = require('./utils/helpFunctions');
 
+
 mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .then(() => {
         console.log('mongo db connected');
@@ -15,6 +16,7 @@ mongoose.connect(keys.mongoUrl, {useNewUrlParser: true})
     .catch(error => console.log(error));
 
 
+const bot = new Telegraf(keys.telegramToken, {polling: true});
 const enterWaterServicePrices = require('./controllers/enterWaterServicePrices');
 const enterWaterService = require('./controllers/enterWaterService');
 const viewWaterServicePrices = require('./controllers/viewWaterServicePrices');
@@ -22,14 +24,10 @@ const enterWaterServiceMeter = require('./controllers/enterWaterServiceMeter');
 const viewWaterServiceMeter = require('./controllers/viewWaterServiceMeter');
 const start = require('./controllers/start');
 const commands = require('./controllers/commands');
-
-const bot = new Telegraf(keys.telegramToken);
-
 bot.help((ctx) => commands(ctx));
 bot.on('sticker', (ctx) => bot.telegram.sendSticker(ctx.update.message.from.id, helpFunctions.getRandomSticker()));
 bot.hears(/привет|hi|добр(.*) (д(.*)|вечер(.*)|утр(.))|здравствуй(.*)/i, (ctx) => ctx.reply('Привет'));
 bot.hears(/пока|до свидан(.*)|до встречи|прощай|до скорого/i, (ctx) => ctx.reply('До встречи'));
-
 
 const stage = new Stage();
 stage.register(enterWaterServicePrices);
@@ -82,4 +80,3 @@ cron.schedule("1 1 20 18,19,20,21,22,23,24,25 * *", () => {
             }
         );
 });
-
