@@ -52,7 +52,7 @@ last updated: ${result.diff} days ago`)
             (error) => {
             },
             () => {
-                return horseman.close();
+                bot.sendMessage(chatId, `complete`);
             },
         );
 
