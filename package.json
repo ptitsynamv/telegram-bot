@@ -21,8 +21,7 @@
   },
   "scripts": {
     "start": "node bot.js",
-    "server": "nodemon server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false"
+    "server": "nodemon server.js"
   },
   "repository": {
     "type": "git",
