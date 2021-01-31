@@ -10,18 +10,12 @@ const horseman = new Horseman();
 
 const Article = require('./models/Article');
 
-// mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
-//     .then(() => {
-//         console.log('mongo db connected');
-//     })
-//     .catch(error => console.log(error));
-
-mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true});
-mongoose.connection.once('open', function () {
-    console.log('mongo db connected');
-}).on('error', function (error) {
-    console.log('Error is: ', error);
-});
+try {
+    mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true}, () =>
+        console.log("mongoose connected"));
+} catch (error) {
+    console.log("could not connect");
+}
 
 const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN)
 bot.start((ctx) => ctx.reply('Welcome'));

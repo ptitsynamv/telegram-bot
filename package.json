@@ -21,8 +21,9 @@
   },
   "scripts": {
     "start": "node bot.js",
-    "server": "nodemon server.js",
-    "deploy": "git add . && git commit -m 'fix' && git push heroku master"
+    "server": "../node_modules/.bin/nodemon server.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run install",
+    "deploy": "git add .. && git commit -m 'fix' && git push heroku master"
   },
   "repository": {
     "type": "git",
