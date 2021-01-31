@@ -7,8 +7,7 @@ const {concatMap, map} = require('rxjs/operators');
 const Horseman = require('node-horseman');
 const horseman = new Horseman();
 const Article = require('./models/Article');
-const express = require('express');
-const expressApp = express();
+
 
 try {
     mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true}, () =>
@@ -17,12 +16,8 @@ try {
     console.log("could not connect");
 }
 
-const PORT = process.env.PORT || 3000;
-const URL = process.env.URL || keys.HEROKU_URL;
-
 const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN);
-bot.telegram.setWebhook(`${URL}/bot${keys.TELEGRAM_BOT_TOKEN}`);
-expressApp.use(bot.webhookCallback(`/bot${keys.TELEGRAM_BOT_TOKEN}`));
+bot.launch();
 
 
 bot.start((ctx) => ctx.reply('Welcome'));
@@ -67,15 +62,8 @@ bot.command('add', (ctx) => {
     // })
 
 });
-bot.launch();
+
 
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-expressApp.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-expressApp.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
