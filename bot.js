@@ -10,7 +10,7 @@ const horseman = new Horseman();
 
 const Article = require('./models/Article');
 
-mongoose.connect(keys.MONGO_URL,  { useNewUrlParser: true, useUnifiedTopology: true  } )
+mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {
         console.log('mongo db connected');
     })
@@ -64,7 +64,6 @@ bot.launch();
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
-
 
 
 // cron.schedule("1 1 20 18,19,20,21,22,23,24,25 * *", () => {
