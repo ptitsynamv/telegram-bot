@@ -16,17 +16,17 @@ const horseman = new Horseman();
 //     console.log("could not connect");
 // }
 
-const bot = new TelegramBot(keys.TELEGRAM_BOT_TOKEN, {polling: true});
+const index = new TelegramBot(keys.TELEGRAM_BOT_TOKEN, {polling: true});
 
-bot.onText(/\/help/, (msg, match) => {
+index.onText(/\/help/, (msg, match) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `/hi - check articles updated;
+    index.sendMessage(chatId, `/hi - check articles updated;
 /add - add article;`);
 });
 
-bot.onText(/\/hi/, (msg, match) => {
+index.onText(/\/hi/, (msg, match) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `please, wait...`);
+    index.sendMessage(chatId, `please, wait...`);
     const data = [
         {
             title: 'Королевская канарейка',
@@ -45,14 +45,14 @@ bot.onText(/\/hi/, (msg, match) => {
         )
         .subscribe(
             (result) => {
-                bot.sendMessage(chatId, `article: ${result.title},
+                index.sendMessage(chatId, `article: ${result.title},
 url: ${result.url},
 last updated: ${result.diff} days ago`)
             },
             (error) => {
             },
             () => {
-                bot.sendMessage(chatId, `complete`);
+                index.sendMessage(chatId, `complete`);
             },
         );
 
@@ -61,9 +61,9 @@ last updated: ${result.diff} days ago`)
     //     .then((data) => {
     //     });
 });
-bot.onText(/\/add/, (msg, match) => {
+index.onText(/\/add/, (msg, match) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `todo`)
+    index.sendMessage(chatId, `todo`)
 
 
     // const article = new Article({

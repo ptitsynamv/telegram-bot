@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node": "8.14.0",
-    "npm": "6.4.1"
+    "node": ">=14.0.0"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -21,10 +20,8 @@
     "nodemon": "^2.0.7"
   },
   "scripts": {
-    "start": "node bot.js",
-    "server": "../node_modules/.bin/nodemon server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install",
-    "deploy": "git add .. && git commit -m 'fix' && git push heroku master"
+    "start": "node index.js",
+    "deploy": "gcloud app deploy"
   },
   "repository": {
     "type": "git",
