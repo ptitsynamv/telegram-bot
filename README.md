@@ -7,18 +7,20 @@ MongoDB - https://www.mongodb.com/cloud/atlas
 2. Run `npm start`.
 
 ## Bugs
-"Unhandled rejection Error: spawn phantomjs ENOENT"
-cd /usr/local/share
-sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-sudo tar xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
-sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/share/phantomjs
-sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
-sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+"Unhandled rejection Error: spawn phantomjs ENOENT":
 
-rm -r node_modules
+1. `cd /usr/local/share`
+2. `sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2`
+3. `sudo tar xjf phantomjs-2.1.1-linux-x86_64.tar.bz2`
+4. `sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/share/phantomjs`
+5. `sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs`
+6. `sudo ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs`
 
-sudo apt-get install libfreetype6
-sudo apt-get install libfontconfig
+7. `rm -r node_modules`
+
+8. `sudo apt-get install libfreetype6`
+9. `sudo apt-get install libfontconfig`
+10.`npm install`
 
 
 ## How to run on server

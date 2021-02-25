@@ -12,13 +12,13 @@ mongoose.connect(keys.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: tru
     console.log('Successfully connected');
 });
 
-const bot = new Telegraf(keys.TELEGRAM_BOT_TOKEN)
-bot.start((ctx) => ctx.reply('Welcome'));
-bot.help((ctx) => ctx.reply(
+const index = new Telegraf(keys.TELEGRAM_BOT_TOKEN)
+index.start((ctx) => ctx.reply('Welcome'));
+index.help((ctx) => ctx.reply(
     `/hi - check articles updated;
 /add - add article;`
 ));
-bot.command('hi', (ctx) => {
+index.command('hi', (ctx) => {
     ctx.reply(`please, wait...`);
 
     function callback(msg) {
@@ -26,27 +26,26 @@ bot.command('hi', (ctx) => {
     }
     findArticle(callback);
 });
-bot.command('add', (ctx) => {
+index.command('add', (ctx) => {
     ctx.reply(`todo`)
     // const article = new Article({
     //     title,
     //     url
     // });
     // return article.save(err => {
-    //    console.log('newMeter')
+    //    console.log('new article added')
     // })
 
 });
-bot.launch();
+index.launch();
 
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+process.once('SIGINT', () => index.stop('SIGINT'))
+process.once('SIGTERM', () => index.stop('SIGTERM'))
 
 
 cron.schedule("0 0 19 * * *", () => {
-    console.log('cron');
     function callback(msg) {
-        bot.telegram.sendMessage(keys.MY_CHAT_ID,msg)
+        index.telegram.sendMessage(keys.MY_CHAT_ID,msg)
     }
     findArticle(callback);
 });
