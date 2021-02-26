@@ -22,13 +22,16 @@
 
 
 ## How to run on server
-New session `screen -S name`
+1. New session `screen -S name`
+In current case: `screen -S telegram-bot`.
+   
+2. Connect to the session you created earlier: `screen -x name`
+In current case: `screen -x telegram-bot`.
 
-Connect to the session you created earlier: `screen -x name`
+3.Show all active sessions: `screen -list`
 
-Show all active sessions: `screen -list`
-
-In current case: `screen -x telegram-bot`
-
-Disconnect from the session but leave it in the background:
+4. Disconnect from the session but leave it in the background:
 hold down ctrl without releasing ctrl press A, then D
+   
+5. Kill session `screen -X -S name quit`
+   In current case: `screen -X -S telegram-bot quit`

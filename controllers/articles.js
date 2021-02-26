@@ -1,5 +1,3 @@
-const Horseman = require('node-horseman');
-const horseman = new Horseman();
 const Article = require('../models/Article');
 const scraping = require('../utils/scraping');
 const {from} = require('rxjs');
@@ -11,7 +9,7 @@ function findArticle(callback) {
             from(data)
                 .pipe(
                     map(({title, url}) => ({title, url})),
-                    concatMap((d) => scraping.scrapingArticles(d, horseman))
+                    concatMap((d) => scraping.scrapingArticles(d))
                 )
                 .subscribe(
                     (result) => {
@@ -20,9 +18,9 @@ url: ${result.url},
 last updated: ${result.diff} days ago`)
                     },
                     (error) => {
+                        console.log('findArticle error:', error);
                     },
                     () => {
-                        return horseman.close();
                     },
                 );
 

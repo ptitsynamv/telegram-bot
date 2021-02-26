@@ -8,11 +8,12 @@
     "npm": "6.4.1"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
     "dotenv": "^8.2.0",
     "moment": "^2.29.1",
     "mongoose": "^5.11.18",
+    "needle": "^2.6.0",
     "node-cron": "^2.0.3",
-    "node-horseman": "^3.1.1",
     "rxjs": "^6.6.6",
     "telegraf": "^4.1.1"
   },
