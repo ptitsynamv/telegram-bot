@@ -1,54 +1,61 @@
 require('dotenv').config();
 
-const {findArticle} = require('./controllers/articles');
 const mongoose = require('mongoose');
-const {Telegraf} = require('telegraf')
-const cron = require("node-cron");
+const {Telegraf} = require('telegraf');
+const cron = require('node-cron');
+const {MenuTemplate, MenuMiddleware} = require('telegraf-inline-menu');
+const {findArticle} = require('./controllers/articles');
 
-mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true}, function (err) {
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}, function (err) {
     if (err) {
         console.log('Error', err);
         throw err
     }
-    console.log('Successfully connected');
+    console.log('Mongoose successfully connected ');
 });
 
-const index = new Telegraf(process.env.TELEGRAM_BOT_TOKEN)
-index.start((ctx) => ctx.reply('Welcome'));
-index.help((ctx) => ctx.reply(
-    `/hi - check articles updated;
-/add - add article;`
-));
-index.command('hi', (ctx) => {
-    ctx.reply(`please, wait...`);
-
-    function callback(msg) {
-        ctx.reply(msg);
+const menuTemplate = new MenuTemplate(ctx => 'Select:');
+menuTemplate.interact('Get data', 'get', {
+    do: async (ctx) => {
+        if (ctx.from.id === Number(process.env.MY_CHAT_ID)) {
+            ctx.reply('please, wait...');
+            findArticle(function callback(msg) {
+                ctx.reply(msg);
+            });
+        } else {
+            ctx.reply('todo');
+        }
+        return false;
     }
-
-    findArticle(callback);
 });
-index.command('add', (ctx) => {
-    ctx.reply(`todo`)
-    // const article = new Article({
-    //     title,
-    //     url
-    // });
-    // return article.save(err => {
-    //    console.log('new article added')
-    // })
-
-});
-index.launch();
-
-process.once('SIGINT', () => index.stop('SIGINT'))
-process.once('SIGTERM', () => index.stop('SIGTERM'))
-
-
-cron.schedule("0 0 19 * * *", () => {
-    function callback(msg) {
-        index.telegram.sendMessage(process.env.MY_CHAT_ID, msg)
+menuTemplate.interact('you name', 'getName', {
+    do: async ctx => {
+        await ctx.reply(`Your name is ${ctx.from.first_name}`);
+        return false;
     }
+});
 
-    findArticle(callback);
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+const menuMiddleware = new MenuMiddleware('/', menuTemplate);
+bot.use(menuMiddleware);
+
+bot.use((ctx, next) => {
+    menuMiddleware.replyToContext(ctx)
+    return next()
+});
+
+bot.launch();
+
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+cron.schedule('0 0 19 * * *', () => {
+    findArticle(function callback(msg, difference) {
+        if (difference === 0) {
+            bot.telegram.sendMessage(process.env.MY_CHAT_ID, msg)
+        }
+    });
 });

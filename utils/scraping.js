@@ -18,7 +18,7 @@ const scrapingArticles = (articleData) => {
 
             resolve({
                 ...articleData,
-                diff: moment().diff(momentDate, 'days'),
+                difference: moment().diff(momentDate, 'days'),
             })
         });
     })

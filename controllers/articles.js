@@ -15,7 +15,7 @@ function findArticle(callback) {
                     (result) => {
                         callback(`article: ${result.title}, 
 url: ${result.url},
-last updated: ${result.diff} days ago`)
+last updated: ${result.difference} days ago`, result.difference);
                     },
                     (error) => {
                         console.log('findArticle error:', error);
