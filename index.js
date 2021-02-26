@@ -31,7 +31,7 @@ menuTemplate.interact('Get data', 'get', {
         return false;
     }
 });
-menuTemplate.interact('you name', 'getName', {
+menuTemplate.interact('what is my name?', 'getName', {
     do: async ctx => {
         await ctx.reply(`Your name is ${ctx.from.first_name}`);
         return false;

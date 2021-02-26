@@ -5,7 +5,7 @@
 1. Run `npm install`.
 2. Run `npm start`.
 
-## How to run nodejs project on server
+## How to run nodejs project on server with screen
 
 1. New session `screen -S name`. In current case: `screen -S telegram-bot`.
 
@@ -16,3 +16,6 @@
 4. Disconnect from the session but leave it in the background: hold down ctrl without releasing ctrl press A, then D.
 
 5. Kill session `screen -X -S name quit`. In current case: `screen -X -S telegram-bot quit`
+
+## How to run nodejs project on server with pm2
+1. `pm2 start index.js`
