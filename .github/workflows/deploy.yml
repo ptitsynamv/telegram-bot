@@ -16,7 +16,7 @@ jobs:
           METHOD: sftp
           PORT: 22
           LOCAL_DIR: '.'
-          REMOTE_DIR: 'var/telegram-bot'
+          REMOTE_DIR: 'var/projects/telegram-bot'
           ARGS: --verbose
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -26,6 +26,6 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT }}
           script: |
-            cd /var/telegram-bot
+            cd /var/projects/telegram-bot
             npm install
-            pm2 restart index.js
+            pm2 restart telegram-bot
