@@ -28,4 +28,4 @@ jobs:
           script: |
             cd /var/telegram-bot
             npm install
-            pm2 start index.js
+            pm2 restart index.js
