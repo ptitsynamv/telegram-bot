@@ -19,7 +19,7 @@ jobs:
           METHOD: sftp
           PORT: 22
           LOCAL_DIR: '.'
-          REMOTE_DIR: 'var/projects/telegram-bot'
+          REMOTE_DIR: '/var/projects/telegram-bot'
           ARGS: --verbose --delete --exclude-glob=.git*/** --exclude=.env --exclude-glob=node_modules/**
 
       - name: Executing remote ssh commands using password
