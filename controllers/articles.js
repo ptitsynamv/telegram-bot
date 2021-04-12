@@ -6,6 +6,7 @@ const {concatMap, map} = require('rxjs/operators');
 function findArticle(callback) {
     Article.find({}, 'title url')
         .then((data) => {
+            callback(`Found ${data.length} articles.`);
             from(data)
                 .pipe(
                     map(({title, url}) => ({title, url})),
@@ -21,6 +22,7 @@ last updated: ${result.difference} days ago`, result.difference);
                         console.log('findArticle error:', error);
                     },
                     () => {
+                        callback('Done')
                     },
                 );
 

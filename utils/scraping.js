@@ -1,28 +1,37 @@
 const moment = require('moment');
 moment.locale('ru');
-const needle = require('needle');
 const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 const selector = '.list-of-fanfic-parts .part:last-child .part-info span';
 
 const scrapingArticles = (articleData) => {
-    return new Promise((resolve, reject) => {
-
-        needle.get(articleData.url, function (err, res) {
-            if (err) {
-                console.log('scrapingArticles error:', error);
-                reject(err);
-            }
-            const $ = cheerio.load(res.body);
+    return puppeteer
+        .launch({
+            args: ['--no-sandbox'],
+        })
+        .then(function (browser) {
+            return browser.newPage();
+        })
+        .then(function (page) {
+            const userAgent = 'Mozilla/5.0 (X11; Linux x86_64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Safari/537.36';
+            return page.setUserAgent(userAgent)
+                .then(() => page.goto(articleData.url))
+                .then(() => page.content());
+        })
+        .then(function (html) {
+            const $ = cheerio.load(html);
             const day = $(selector).attr('title');
             const momentDate = moment(day, "DD MMMM YYYY, h:mm");
-
-            resolve({
+            return {
                 ...articleData,
                 difference: moment().diff(momentDate, 'days'),
-            })
+            }
+        })
+        .catch(function (err) {
+            console.log('scrapingArticles error:', err);
+            return err;
         });
-    })
-}
+};
 
 
 const scrapingArticlesHorseman = (articleData, horseman) => {
@@ -48,3 +57,22 @@ const scrapingArticlesHorseman = (articleData, horseman) => {
 }
 
 module.exports = {scrapingArticles};
+
+
+// needle.get(articleData.url, function (err, res) {
+//     if (err) {
+//         console.log('scrapingArticles error:', err);
+//         reject(err);
+//     }
+//
+//     console.log('statusCode', res.statusCode);
+//
+//     const $ = cheerio.load(res.body);
+//     const day = $(selector).attr('title');
+//     console.log('day', day);
+//     const momentDate = moment(day, "DD MMMM YYYY, h:mm");
+//     resolve({
+//         ...articleData,
+//         difference: moment().diff(momentDate, 'days'),
+//     })
+// });
