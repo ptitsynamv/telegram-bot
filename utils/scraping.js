@@ -5,10 +5,15 @@ const puppeteer = require('puppeteer');
 const selector = '.list-of-fanfic-parts .part:last-child .part-info span';
 
 const scrapingArticles = (articleData) => {
+    const options = {
+        args: ['--no-sandbox'],
+    };
+    if (process.env.PUPPETTER_EXECUTABLE_PATH) {
+        options['executablePath'] = process.env.PUPPETTER_EXECUTABLE_PATH;
+    }
+
     return puppeteer
-        .launch({
-            args: ['--no-sandbox'],
-        })
+        .launch(options)
         .then(function (browser) {
             return browser.newPage();
         })
@@ -21,7 +26,7 @@ const scrapingArticles = (articleData) => {
         .then(function (html) {
             const $ = cheerio.load(html);
             const day = $(selector).attr('title');
-            const momentDate = moment(day, "DD MMMM YYYY, h:mm");
+            const momentDate = moment(day, 'DD MMMM YYYY, h:mm');
             return {
                 ...articleData,
                 difference: moment().diff(momentDate, 'days'),
@@ -41,7 +46,7 @@ const scrapingArticlesHorseman = (articleData, horseman) => {
             .open(articleData.url)
             .attribute(selector, 'title')
             .then((day) => {
-                const momentDate = moment(day, "DD MMMM YYYY, h:mm")
+                const momentDate = moment(day, 'DD MMMM YYYY, h:mm')
                 return moment().diff(momentDate, 'days');
             })
             .then(function (diff) {
